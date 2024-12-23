@@ -1,55 +1,247 @@
+import math
 import mcschematic
 
-def disk(radius):
-    # can be improved with different algorithm
-    schem = mcschematic.MCSchematic()
-    for x in range(-radius, radius+1):
-        for z in range(-radius, radius+1):
-            if x**2 + z**2 < radius**2:
-                schem.setBlock((x, 0, z), "minecraft:cobblestone")
-    return schem
+# towerblocks = [
+#     (-3199, 68, -1140),
 
-def hollow(schem : mcschematic.MCSchematic, axiis=(True,True,True)):
-    # doesnt actually work how it should since not full axis if off is filled
-    bounds = schem.getStructure().getBounds()
-    bounds = (tuple([i-1 for i in bounds[0]]), tuple([i+1 for i in bounds[1]]))
-    
-    doing = set([bounds[0]])
-    done = set()
-    structure = set()
+#     (-3200, 68, -1140),
+
+#     (-3201, 68, -1139),
+#     (-3201, 66, -1140),
+#     (-3201, 68, -1141),
+
+#     (-3202, 68, -1138),
+#     (-3202, 66, -1139),
+#     (-3202, 66, -1140),
+#     (-3202, 68, -1141),
+
+#     (-3203, 68, -1137),
+#     (-3203, 66, -1138),
+#     (-3203, 66, -1139),
+#     (-3203, 66, -1140),
+#     (-3203, 68, -1141),
+
+#     (-3204, 68, -1135),
+#     (-3204, 68, -1136),
+#     (-3204, 66, -1137),
+#     (-3204, 66, -1138),
+#     (-3204, 66, -1139),
+#     (-3204, 66, -1140),
+#     (-3204, 68, -1141),
+
+#     (-3205, 68, -1141),
+#     (-3205, 66, -1140),
+#     (-3205, 66, -1139),
+#     (-3205, 66, -1138),
+#     (-3205, 66, -1137),
+#     (-3205, 66, -1136),
+#     (-3205, 66, -1135),
+#     (-3205, 68, -1134),
+#     (-3205, 68, -1133),
+
+#     (-3206, 68, -1131),
+#     (-3206, 68, -1132),
+#     (-3206, 66, -1133),
+#     (-3206, 66, -1134),
+#     (-3206, 66, -1135),
+#     (-3206, 66, -1136),
+#     (-3206, 66, -1137),
+#     (-3206, 66, -1138),
+#     (-3206, 66, -1139),
+#     (-3206, 66, -1140),
+#     (-3206, 66, -1141),
+#     (-3206, 68, -1142),
+
+#     (-3207, 68, -1142),
+#     (-3207, 66, -1141),
+#     (-3207, 66, -1140),
+#     (-3207, 66, -1139),
+#     (-3207, 66, -1138),
+#     (-3207, 66, -1137),
+#     (-3207, 66, -1136),
+#     (-3207, 66, -1135),
+#     (-3207, 66, -1134),
+#     (-3207, 66, -1133),
+#     (-3207, 68, -1132),
+
+#     (-3208, 68, -1132),
+#     (-3208, 66, -1133),
+#     (-3208, 66, -1134),
+#     (-3208, 66, -1135),
+#     (-3208, 66, -1136),
+#     (-3208, 66, -1137),
+#     (-3208, 66, -1138),
+#     (-3208, 66, -1139),
+#     (-3208, 66, -1140),
+#     (-3208, 66, -1141),
+#     (-3208, 68, -1142),
+
+#     (-3209, 68, -1142),
+#     (-3209, 66, -1141),
+#     (-3209, 66, -1140),
+#     (-3209, 66, -1139),
+#     (-3209, 66, -1138),
+#     (-3209, 66, -1137),
+#     (-3209, 66, -1136),
+#     (-3209, 66, -1135),
+#     (-3209, 66, -1134),
+#     (-3209, 66, -1133),
+#     (-3209, 68, -1132),
+
+#     (-3210, 68, -1132),
+#     (-3210, 66, -1133),
+#     (-3210, 66, -1134),
+#     (-3210, 66, -1135),
+#     (-3210, 66, -1136),
+#     (-3210, 66, -1137),
+#     (-3210, 66, -1138),
+#     (-3210, 66, -1139),
+#     (-3210, 66, -1140),
+#     (-3210, 66, -1141),
+#     (-3210, 66, -1142),
+#     (-3210, 68, -1143),
+
+#     (-3211, 68, -1143),
+#     (-3211, 66, -1142),
+#     (-3211, 66, -1141),
+#     (-3211, 66, -1140),
+#     (-3211, 66, -1139),
+#     (-3211, 66, -1138),
+#     (-3211, 66, -1137),
+#     (-3211, 66, -1136),
+#     (-3211, 66, -1135),
+#     (-3211, 66, -1134),
+#     (-3211, 68, -1133),
+
+#     (-3212, 68, -1133),
+#     (-3212, 66, -1134),
+#     (-3212, 68, -1135),
+#     (-3212, 68, -1136),
+#     (-3212, 68, -1137),
+#     (-3212, 68, -1138),
+#     (-3212, 68, -1139),
+#     (-3212, 68, -1140),
+#     (-3212, 68, -1141),
+#     (-3212, 66, -1142),
+#     (-3212, 66, -1143),
+#     (-3212, 68, -1144),
+
+#     (-3213, 68, -1144),
+#     (-3213, 68, -1143),
+#     (-3213, 68, -1142),
+#     (-3213, 68, -1134),
+#     (-3213, 68, -1133),
+
+#     (-3214, 68, -1144),
+# ]
+
+towerblocks = [
+    (-3225, 68, -1151),
+    (-3226, 68, -1151),
+    (-3227, 68, -1151),
+    (-3228, 68, -1151),
+    (-3227, 68, -1152),
+    (-3226, 68, -1152),
+    (-3228, 68, -1153),
+    (-3229, 68, -1154),
+    (-3230, 68, -1155),
+    (-3231, 68, -1156),
+    (-3232, 68, -1157),
+    (-3233, 68, -1158),
+    (-3234, 68, -1159),
+    (-3234, 68, -1160),
+    (-3235, 68, -1160),
+    (-3235, 68, -1161),
+    (-3235, 68, -1159),
+    (-3235, 68, -1158),
+    (-3236, 68, -1157),
+    (-3236, 68, -1156),
+    (-3237, 68, -1155),
+    (-3237, 68, -1154),
+    (-3238, 68, -1153),
+    (-3239, 68, -1152),
+    (-3240, 68, -1151),
+    (-3240, 68, -1150),
+    (-3239, 68, -1149),
+    (-3238, 68, -1148),
+    (-3237, 68, -1147),
+    (-3236, 68, -1146),
+    (-3235, 68, -1146),
+    (-3234, 68, -1147),
+    (-3233, 68, -1148),
+    (-3232, 68, -1149),
+    (-3231, 68, -1149),
+    (-3230, 68, -1150),
+    (-3229, 68, -1150),
+]
+
+def fill(coords, start):
+    doing = set([start])
+    done = coords.copy()
 
     while doing:
         cur = doing.pop()
-
-        for axis in range(3):
-            for way in (-1, 1):
-                new = list(cur)
-                new[axis] += way
-                new = tuple(new)
-
-                if axiis[axis] and new not in done and new[0] >= bounds[0][0] and new[0] <= bounds[1][0] and new[1] >= bounds[0][1] and new[1] <= bounds[1][1] and new[2] >= bounds[0][2] and new[2] <= bounds[1][2]:
-                    if schem.getBlockDataAt(new) != 'minecraft:air':
-                        structure.add(new)
-                    else:
-                        doing.add(new)
         
+        if (cur[0]+1, cur[1]) not in done: doing.add((cur[0]+1, cur[1]))
+        if (cur[0]-1, cur[1]) not in done: doing.add((cur[0]-1, cur[1]))
+        if (cur[0], cur[1]+1) not in done: doing.add((cur[0], cur[1]+1))
+        if (cur[0], cur[1]-1) not in done: doing.add((cur[0], cur[1]-1))
+
         done.add(cur)
-    
-    r_schem = mcschematic.MCSchematic()
-    for block in structure:
-        r_schem.setBlock(block, schem.getBlockDataAt(block))
-    
-    return r_schem
-    
 
-                    
+    return done
 
 
-schem = hollow(disk(25), (True, False, True))
+def distance(coord1, coord2):
+    return math.sqrt(sum([(i-j)**2 for i, j in zip(coord1, coord2)]))
+
+def tower(blocks):
+    schem = mcschematic.MCSchematic()
+
+    centre = (-3193, 66, -1193)
+    # inner_radius = 52
+    inner_radius = 56
+    outer_radius = 64
+    height = 166
+
+    # blocks = [(b[0], b[2]) for b in blocks]
+
+    for y in range(66, height+1):
+        prog = (y-centre[1])/(height-centre[1])
+        delta = outer_radius-inner_radius
+        prog = prog**2
+        # prog = max(0, 2*prog-1)
+        # prog = max(0, math.sin((4*prog-3)*math.pi/2))
+        # prog = ((2*(prog-.5))**3+1)/2
+        max_dist = outer_radius - prog*delta
+        for block in blocks:
+            coord = (block[0], y, block[1])
+            dist = distance(coord, (centre[0], y, centre[2]))
+            if dist <= max_dist:
+                schem.setBlock(coord, "minecraft:cobblestone")
+    
+    return schem
+
+towerblocks = set([(i[0], i[2]) for i in towerblocks])
+towerblocks = fill(towerblocks, (-3235, -1157))
+
+schem = tower(towerblocks)
+schem.getStructure().center(schem.getStructure().getBounds())
+schem.save(".", "a", mcschematic.Version.JE_1_20_1)
+
+# for i in range(1000):
+# schem = circle(25/2)
 # schem.setBlock((0, 0, 0), "minecraft:cobblestone")
 # schem.save(".", "a", mcschematic.Version.JE_1_18_2)
 
-for i in range(-50, 51):
-    for j in range(-50, 51):
-        print('.' if schem.getBlockDataAt((i, 0, j)) == 'minecraft:air' else '#', end='')
-    print()
+# for i in range(-16, 16):
+#     for j in range(-16, 16):
+#         print(('#' if (i, j) in a else '.'), end='')
+#     print()
+
+# print("aawiuawoiduh")
+
+# for i in range(-16, 16):
+#     for j in range(-16, 16):
+#         print(('#' if (i, j) in b else '.'), end='')
+#     print()
